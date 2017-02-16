@@ -366,6 +366,7 @@
                     i++
                     if (i>maze.path.length){
                         cancelAnimationFrame(spy.moveState)
+                        return
                     }
                     spy.moveState=window.requestAnimationFrame(move)
                 }
