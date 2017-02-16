@@ -176,7 +176,9 @@
                         }
                         maze.open=[]
                         for (var j=0;j<maze.close.length;j++){
-                            maze.close[j].init()
+                            if(typeof  maze.close[j]!="undefined"){
+                                maze.close[j].init()
+                            }
                         }
                         maze.close=[]
                     },
