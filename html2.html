@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        body{
+            margin: 0;
+            background-color:#004590;
+        }
+    </style>
+    <script>
+        window.onload=function () {
+            //获取DOM元素
+            var _btns = document.getElementById("btns")
+            //载入人物图片资源
+            var charReady = false
+            var charImage = new Image
+            charImage.src = "char1.gif"
+            var chw = charImage.width
+            var chh = charImage.height
+            charImage.onload = function () {
+                charReady = true
+            }
+            //载入背景图片资源
+            var bgReady = false
+            var bgImage = new Image
+            bgImage.src = "bg.png"
+            bgImage.onload = function () {
+                bgReady = true
+            }
+            //创建画布
+            var can = document.createElement("canvas")
+            var ctx = can.getContext("2d")
+            //画布尺寸取图片在window中的最大模数
+            can.width = Math.floor(document.documentElement.clientWidth / 25) * 25
+            can.height = Math.floor(document.documentElement.clientHeight / 32) * 32
+            var bgw = can.width
+            var bgh = can.height
+            //设置样式使其居中
+            can.style.marginLeft = ((document.documentElement.clientWidth - can.width) / 2) + "px"
+            can.style.marginTop = ((document.documentElement.clientHeight - can.height) / 2) + "px"
+            document.body.appendChild(can)
+            // requestAnimationFrame 的浏览器兼容性处理
+            var w = window;
+            requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
+            //图片
+            var resourseReady = false;
+            //节点
+            var Node = function (x, y) {
+                this.id = "x" + x + "y" + y
+                this.x = x
+                this.y = y
+                this.isRoadBlock = true
+            }
+            Node.prototype.pushIntoOpen = function (parent) {
+                //如果该节点不可进入或者在close列表中则不做任何操作返回
+                for (var i=0;i<maze.close.length;i++){
+                    if (this===maze.close[i]){
+                        return
+                    }
+                }
+                if (this.isRoadBlock===true){
+                    return
+                }
+                //如果该节点处于open列表且旧g比新值大，更新该点相关寻路属性，否则不做操作
+                //又该节点不在open列表中，更新该点相关寻路属性后加入open列表
+                if (this.hasOwnProperty("parent")) {
+                    if (this.g > parent.g + 1) {
+                        this.parent = parent
+                        this.g = parent.g + 1
+                        this.f = this.g + this.h
+                    }
+                } else {
+                    this.parent = parent
+                    this.g = this.parent.g + 1
+                    this.h = Math.abs(maze.endNode.x - this.x) + Math.abs(maze.endNode.y - this.y)
+                    this.f = this.g + this.h
+                    maze.open.push(this)
+                }
+            }
+            Node.prototype.init=function () {
+                delete this.g
+                delete this.h
+                delete this.f
+                delete this.parent
+            }
+            //格子迷宫
+            var maze = {
+                startNode: "",
+                endNode: "",
+                allNodes: [],
+                road: [],
+                path: [],
+//                walls:[],
+                height: bgh,
+                width: bgw,
+                rows: bgh / chh,
+                rowsSize: chh,
+                cols: bgw / chw,
+                colsSize: chw,
+                open:[],
+                close:[],
+                init: function () {
+                    //重置迷宫
+                    maze.allNodes = []
+                },
+                //创建迷宫网格对象的二维数组
+                createmaze: function () {
+                    //重置网格
+                    maze.allNodes = []
+                    var temparry
+                    for (var i = 0; i < maze.rows; i++) {
+                        temparry = []
+                        for (var j = 0; j < maze.cols; j++) {
+                            temparry.push(new Node(j, i))
+                        }
+                        maze.allNodes.push(temparry)
+                    }
+                },
+                //创建道路
+                createroad: function () {
+                    //重置道路
+                    maze.road = [];
+                    //在每行随机生成一个节点
+                    var roadnodes = [];
+                    for (var i = 0; i < maze.rows; i++) {
+                        roadnodes.push({x: Math.floor(Math.random() * maze.cols), y: i})
+                    }
+                    maze.roadnodes = roadnodes
+                    //把这些节点存入道路
+                    maze.road = maze.road.concat(roadnodes)
+                    //连接这些节点
+                    for (var j = 1; j < roadnodes.length; j++) {
+                        //上下两层x坐标的差值
+                        var dx = roadnodes[j].x - roadnodes[j - 1].x;
+                        //给插值取整
+                        var absdx = Math.abs(dx)
+                        //判断正负
+                        var nnn = dx / absdx
+                        for (var n = 0; n < absdx; n++) {
+                            //把这些节点加入道路
+                            maze.road.push({x: roadnodes[j].x - n * nnn, y: roadnodes[j - 1].y})
+                        }
+                    }
+                    console.log(roadnodes)
+                    console.log(maze.road)
+                    //把对应点的isroadblock属性更新为false,把首位行的所有node的此属性改为false
+                    for (var s=0; s < maze.road.length; s++) {
+                        maze.allNodes[maze.road[s].y][maze.road[s].x].isRoadBlock=false
+
+                    }
+                    for(var b=0;b<maze.cols;b++){
+                        maze.allNodes[0][b].isRoadBlock=false
+                        maze.allNodes[maze.rows-1][b].isRoadBlock=false
+                    }
+                    //随机生成一些岔路
+                    for (i = 1; i < maze.rows-1; i++) {
+                        s=Math.floor(Math.random()* parseInt(maze.cols/2))
+                        for (j=0;j<s;j++) {
+                            maze.allNodes[i][Math.floor(Math.random() * maze.cols)].isRoadBlock=false
+                        }
+                    }
+                    console.log(maze.allNodes)
+                },
+                search:{
+                    //初始化
+                    init:function () {
+                        //初始化path列表
+                        maze.path=[]
+                        //删除所有open/close列表中node的g,h,f,parent值，并且初始化这两个列表
+                        for (var i=0;i<maze.open.length;i++){
+                            maze.open[i].init()
+                        }
+                        maze.open=[]
+                        for (var j=0;j<maze.close.length;j++){
+                            maze.close[j].init()
+                        }
+                        maze.close=[]
+                    },
+                    getEndNode:function (x,y) {
+                        //把传入的点转换为对应的网格坐标
+                        console.log(Math.floor(y/maze.rowsSize))
+                        console.log(Math.floor(x/maze.colsSize))
+                        maze.endNode=maze.allNodes[Math.floor(y/maze.rowsSize)][Math.floor(x/maze.colsSize)]
+                    },
+                    //在open列表中找到f最小的节点
+                    getMin_f:function () {
+                        var min_f=maze.open[0]
+                        for (var i=1;i<maze.open.length;i++){
+                            min_f=(min_f.f<maze.open[i].f)?min_f:maze.open[i]
+                        }
+                        return min_f
+                    },
+                    //把四周符合条件的点加入open列表
+                    checkAround:function (parent) {
+                        //上方的点,检测上方是否超出canvas
+                        if (parent.y!=0){
+                            maze.allNodes[parent.y-1][parent.x].pushIntoOpen(parent)
+                        }
+                        //右方的点,检测右方是否超出canvas
+                        if (parent.x!=(maze.cols-1)){
+                            maze.allNodes[parent.y][parent.x+1].pushIntoOpen(parent)
+                        }
+                        //下方的点,检测下方是否超出canvas
+                        if (parent.y!=(maze.rows-1)){
+                            maze.allNodes[parent.y+1][parent.x].pushIntoOpen(parent)
+                        }
+                        //左方的点,检测左方是否超出canvas
+                        if (parent.x!=0){
+                            maze.allNodes[parent.y][parent.x-1].pushIntoOpen(parent)
+                        }
+                    },
+                    getpath:function (x,y) {
+                        //把x,y修正
+                        x=x-parseInt(can.style.marginLeft)
+                        y=y-parseInt(can.style.marginTop)
+                        //首先初始化所有点的寻路相关属性
+                        this.init()
+                        //
+                        var min_f
+                        //获取起点 目的地
+                        maze.startNode=maze.allNodes[spy.y][spy.x]
+                        this.getEndNode(x,y)
+                        console.log("出发点")
+                        console.log(maze.startNode)
+                        console.log("目的地")
+                        console.log(maze.endNode)
+                        //验证目的地是否可以进入
+                        if (maze.endNode.isRoadBlock===false){
+                            //把起点加入open列表
+                            maze.startNode.g=0
+                            maze.startNode.h=Math.abs(maze.endNode.x - maze.startNode.x) + Math.abs(maze.endNode.y - maze.startNode.y)
+                            maze.startNode.f= maze.startNode.g+ maze.startNode.h
+                            maze.open.push(maze.startNode)
+                            //循环open列表直到endNode处于列表中
+                            do
+                                {
+                                    //找出f最小值的节点
+                                    min_f = this.getMin_f()
+                                    /*
+                                    console.log("最小的F节点")
+                                    console.log(min_f)
+                                    */
+                                    //把该点从open删除并且加入close列表
+                                    maze.open.splice(maze.open.indexOf(min_f),1)
+                                    maze.close.push(min_f)
+                                    //把四周符合条件的点加入open列表并且添加寻路属性
+                                    this.checkAround(min_f)
+                                }
+                            while (min_f != maze.endNode)
+                            console.log("close")
+                            console.log(maze.close)
+                            console.log("open")
+                            console.log(maze.open)
+                            //从endNode开始追寻parent直到startNode,把途中所有点加入path列表
+                             do
+                            {
+                                maze.path.unshift(min_f)
+                                min_f = min_f.parent
+                            }
+                            while (min_f!=maze.startNode)
+                            console.log("路径")
+                            console.log(maze.path)
+                        }
+                    }
+                }
+                /*
+                //创建墙壁
+                createwalls: function () {
+                    maze.walls = [];
+                    //排除所有在路径上的点存入墙壁数组并且给此点的roadblock属性更新为false
+                    for (var i; i < maze.allNodes.length; i++) {
+                        for (var j; j < maze.road.length; j++) {
+                            if (maze.allNodes[i].x === maze.road[j].x && maze.allNodes[i].y === maze.road[j].y) {
+                                maze.allNodes[i].isRoadBlock = false
+                                maze.walls.push(maze.allNodes[i])
+                            }
+                        }
+                    }
+                }
+                */
+            }
+            //创建人物对象
+            var spy = {
+                x: Math.ceil(maze.cols/2),
+                y: 0,
+                width: parseInt(charImage.width),
+                height: parseInt(charImage.height),
+                moveState:"",
+                setx: function (x, dx) {
+                    if (this.x == x) {
+                    } else {
+                        this.x = this.x + dx;
+                    }
+                },
+                sety: function (y, dy) {
+                    if (this.y == y) {
+                    } else {
+                        this.y = this.y + dy;
+                    }
+                }
+            }
+            //背景
+            var bg = {
+                x: 0,
+                y: 0,
+                width: bgw,
+                height: bgh
+            }
+            //更新
+            var update=function (x,y) {
+                spy.x=x
+                spy.y=y
+            }
+            //渲染canvas
+            var render=function () {
+                if(bgReady==true){
+                    ctx.drawImage(bgImage,bg.x,bg.y, bg.width,bg.height)
+                }
+                /*
+                 ctx.fillStyle="#7FFF00"
+                 for(var i=0;i<maze.path.length;i++){
+                 var x=((maze.path[i].x-1)*maze.colsSize())
+                 var y=(maze.path[i].y-1)*maze.rowsSize()+(can.height-maze.height)/2
+                 ctx.fillRect(x,y,maze.colsSize(),maze.rowsSize());
+                 }
+                 */
+                ctx.fillStyle="#004590"
+                for(var j=1;j<maze.rows-1;j++){
+                    for (var i=0;i<maze.cols;i++){
+                        if (maze.allNodes[j][i].isRoadBlock===true){
+                            ctx.fillRect(maze.allNodes[j][i].x*maze.colsSize,maze.allNodes[j][i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
+                        }
+                    }
+                }
+                //渲染open和close
+                ctx.fillStyle="rgba(239,166,38,0.6)"
+                for (i=0;i<maze.close.length;i++){
+                    ctx.fillRect(maze.close[i].x*maze.colsSize,maze.close[i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
+                }
+                ctx.fillStyle="#25B550"
+                for (i=0;i<maze.open.length;i++){
+                    ctx.fillRect(maze.open[i].x*maze.colsSize,maze.open[i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
+                }
+                //
+                if (charReady == true) {
+                    ctx.drawImage(charImage,spy.x*maze.colsSize, spy.y*maze.rowsSize )
+                }
+            }
+            can.addEventListener("click",function () {
+                cancelAnimationFrame(spy.moveState)
+                maze.search.getpath(event.clientX,event.clientY)
+
+                var i=0
+                var move=function () {
+                    update(maze.path[i].x,maze.path[i].y)
+                    render()
+                    i++
+                    if (i>maze.path.length){
+                        cancelAnimationFrame(spy.moveState)
+                    }
+                    spy.moveState=window.requestAnimationFrame(move)
+                }
+                move()
+            })
+            maze.createmaze()
+            maze.createroad()
+            setTimeout(function () {
+                render()
+            },500)
+            console.log(spy.x+" "+maze.rows+" "+maze.colsSize)
+            console.log( maze.allNodes)
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>
