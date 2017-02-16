@@ -242,6 +242,9 @@
                                 {
                                     //找出f最小值的节点
                                     min_f = this.getMin_f()
+                                    if (min_f===maze.endNode){
+                                        break
+                                    }
                                     /*
                                     console.log("最小的F节点")
                                     console.log(min_f)
