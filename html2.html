@@ -364,7 +364,7 @@
                     update(maze.path[i].x,maze.path[i].y)
                     render()
                     i++
-                    if (i>maze.path.length){
+                    if (i>=maze.path.length){
                         cancelAnimationFrame(spy.moveState)
                         return
                     }
