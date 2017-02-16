@@ -368,6 +368,8 @@
             })
             setTimeout(function () {
                 render()
+                maze.createmaze()
+                maze.createroad()
             },500)
             console.log(spy.x+" "+maze.rows+" "+maze.colsSize)
             console.log( maze.allNodes)
