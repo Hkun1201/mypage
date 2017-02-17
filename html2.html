@@ -15,21 +15,38 @@
         window.onload=function () {
             //获取DOM元素
             var _btns = document.getElementById("btns")
+            //载入任务目标图片资源
+            var tarReady=false
+            var tarImage=new Image
+            tarImage.src="greengem.png"
+            tarImage.onload = function () {
+                tarReady = true
+            }
             //载入人物图片资源
             var charReady = false
-            var charImage = new Image
-            charImage.src = "https://hkun1201.github.io/mypage/char1.gif"
+            var charImages=[]
+            for (var i=0;i<3;i++) {
+                charImages.push(new Image)
+                charImages[i].src = "pm00"+(i+1)+".png"
+            }
             var chw = 25
             var chh = 32
-            charImage.onload = function () {
+            charImages[0].onload = function () {
                 charReady = true
             }
             //载入背景图片资源
             var bgReady = false
             var bgImage = new Image
-            bgImage.src = "https://hkun1201.github.io/mypage/bg.png"
+            bgImage.src = "grass.png"
             bgImage.onload = function () {
                 bgReady = true
+            }
+            //载入障碍物图片资源
+            var obsReady=false
+            var obsImage=new Image
+            obsImage.src="shrubs.png"
+            obsImage.onload = function () {
+                obsReady = true
             }
             //创建画布
             var can = document.createElement("canvas")
@@ -89,11 +106,15 @@
             }
             //格子迷宫
             var maze = {
+                countDown:5,
+                round:-1,
                 startNode: "",
                 endNode: "",
                 allNodes: [],
                 road: [],
                 path: [],
+                open:[],
+                close:[],
 //                walls:[],
                 height: bgh,
                 width: bgw,
@@ -101,11 +122,20 @@
                 rowsSize: chh,
                 cols: bgw / chw,
                 colsSize: chw,
-                open:[],
-                close:[],
                 init: function () {
-                    //重置迷宫
+                    //增加一次通关回数
+                    maze.round++
+                    //重置迷宫相关信息
+                    maze.startNode=""
+                    maze.endNode=""
                     maze.allNodes = []
+                    maze.road=[]
+                    maze.path=[]
+                    maze.open=[]
+                    maze.close=[]
+                    //创建新的迷宫
+                    maze.createmaze()
+                    maze.createroad()
                 },
                 //创建迷宫网格对象的二维数组
                 createmaze: function () {
@@ -168,6 +198,10 @@
                 search:{
                     //初始化
                     init:function () {
+                        console.log("close")
+                        console.log(maze.close)
+                        console.log("open")
+                        console.log(maze.open)
                         //初始化path列表
                         maze.path=[]
                         //删除所有open/close列表中node的g,h,f,parent值，并且初始化这两个列表
@@ -176,6 +210,7 @@
                         }
                         maze.open=[]
                         for (var j=0;j<maze.close.length;j++){
+                            console.log(maze.close[j])
                             if(typeof  maze.close[j]!="undefined"){
                                 maze.close[j].init()
                             }
@@ -288,25 +323,35 @@
                 }
                 */
             }
+            //目标对象
+            var target={
+                x:Math.ceil(maze.cols/2),
+                y: maze.rows-1,
+                width:parseInt(tarImage.width),
+                height:parseInt(tarImage.height)
+        }
             //创建人物对象
             var spy = {
+                img:{},
                 x: Math.ceil(maze.cols/2),
                 y: 0,
-                width: parseInt(charImage.width),
-                height: parseInt(charImage.height),
-                moveState:"",
-                setx: function (x, dx) {
-                    if (this.x == x) {
-                    } else {
-                        this.x = this.x + dx;
-                    }
+                setimg:function () {
+                    spy.img=charImages[Math.floor(maze.round/3)]
                 },
-                sety: function (y, dy) {
-                    if (this.y == y) {
-                    } else {
-                        this.y = this.y + dy;
-                    }
+                width: parseInt(charImages[0].width),
+                height: parseInt(charImages[0].height),
+                moveState:"",
+                init:function () {
+                    spy.setimg()
+                    //结束动画
+                    cancelAnimationFrame(spy.moveState)
+                    //复位
+                    spy.x=Math.ceil(maze.cols/2)
+                    spy.y=0
                 }
+            }
+            //障碍物
+            var obstacle={
             }
             //背景
             var bg = {
@@ -322,8 +367,11 @@
             }
             //渲染canvas
             var render=function () {
+                //背景
                 if(bgReady==true){
-                    ctx.drawImage(bgImage,bg.x,bg.y, bg.width,bg.height)
+//                    ctx.drawImage(bgImage,bg.x,bg.y, bg.width,bg.height)
+                    ctx.fillStyle="white"
+                    ctx.fillRect(0,0,maze.width,maze.height)
                 }
                 /*
                  ctx.fillStyle="#7FFF00"
@@ -333,15 +381,16 @@
                  ctx.fillRect(x,y,maze.colsSize(),maze.rowsSize());
                  }
                  */
-                ctx.fillStyle="#004590"
+                //障碍物
+//                ctx.fillStyle="#004590"
                 for(var j=1;j<maze.rows-1;j++){
                     for (var i=0;i<maze.cols;i++){
                         if (maze.allNodes[j][i].isRoadBlock===true){
-                            ctx.fillRect(maze.allNodes[j][i].x*maze.colsSize,maze.allNodes[j][i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
+                            ctx.drawImage(obsImage,maze.allNodes[j][i].x*maze.colsSize,maze.allNodes[j][i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
                         }
                     }
                 }
-                //渲染open和close
+                //渲染open和close中节点
                 ctx.fillStyle="rgba(239,166,38,0.6)"
                 for (i=0;i<maze.close.length;i++){
                     ctx.fillRect(maze.close[i].x*maze.colsSize,maze.close[i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
@@ -350,11 +399,51 @@
                 for (i=0;i<maze.open.length;i++){
                     ctx.fillRect(maze.open[i].x*maze.colsSize,maze.open[i].y*maze.rowsSize,maze.colsSize,maze.rowsSize);
                 }
-                //
+                //文字
+                //设置字体样式
+                ctx.font = "20px Courier New"
+                //设置字体填充颜色
+                ctx.fillStyle = "#8064A2"
+                //从坐标点(50,50)开始绘制文字
+                ctx.fillText("进化能量"+maze.round%3+"/3", 20, 20)
+                ctx.fillText("进化阶段"+Math.floor(maze.round/3), maze.width-120, 20)
+                if (maze.round===0){
+                    console.log(maze.countDown)
+                    if(maze.countDown>0) {
+                        maze.countDown--
+                        ctx.fillStyle = "rgba(0,0,0,0.8)"
+                        ctx.fillRect(0, 0.5 * maze.height - 30, maze.width, 50)
+                        ctx.font = "12px Courier New"
+                        ctx.fillStyle = "white"
+                        ctx.fillText("为了追求进化，妙蛙草走上了寻找进化之石的道路..", 10, 0.5 * maze.height)
+                        ctx.strokeStyle="gold"
+                        ctx.strokeRect(target.x*maze.colsSize,target.y*maze.rowsSize,maze.colsSize,maze.rowsSize)
+                    }
+                }
+                //任务目标
+                if (tarReady===true){
+                    console.log("target")
+                    ctx.drawImage(tarImage,target.x*maze.colsSize+(25-target.width)/2, target.y*maze.rowsSize+(32-target.height)/2 )
+        }
+                //角色
                 if (charReady == true) {
-                    ctx.drawImage(charImage,spy.x*maze.colsSize, spy.y*maze.rowsSize )
+                    ctx.drawImage(spy.img,spy.x*maze.colsSize, spy.y*maze.rowsSize,25,32 )
+                }
+                //判断是否到达目标点
+                if (spy.x===target.x&&spy.y===target.y){
+                    reset()
                 }
             }
+            //开始一轮新游戏
+            var reset=function () {
+                //初始化地图信息
+                maze.init()
+                //初始化人物信息
+                spy.init()
+                //最后渲染
+                render()
+            }
+            //
             can.addEventListener("click",function () {
                 cancelAnimationFrame(spy.moveState)
                 maze.search.getpath(event.clientX,event.clientY)
@@ -365,18 +454,37 @@
                     render()
                     i++
                     if (i>=maze.path.length){
-                        cancelAnimationFrame(spy.moveState)
                         return
                     }
                     spy.moveState=window.requestAnimationFrame(move)
                 }
                 move()
             })
-                maze.createmaze()
-                maze.createroad()
-            setTimeout(function () {
+            tarImage.addEventListener("load",function () {
+                if (tarReady===true&&charReady===true&&bgReady===true&&obsReady===true){
+                    reset()
+                }
+            })
+            charImages[0].addEventListener("load",function () {
+                if (tarReady===true&&charReady===true&&bgReady===true&&obsReady===true){
+                    reset()
+                }
+            })
+            bgImage.addEventListener("load",function () {
+                if (tarReady===true&&charReady===true&&bgReady===true&&obsReady===true){
+                    reset()
+                }
+            })
+            obsImage.addEventListener("load",function () {
+                if (tarReady===true&&charReady===true&&bgReady===true&&obsReady===true){
+                    reset()
+                }
+            })
+             /*
+             setTimeout(function () {
                 render()
             },500)
+            */
             console.log(spy.x+" "+maze.rows+" "+maze.colsSize)
             console.log( maze.allNodes)
         }
