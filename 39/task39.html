@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task 39</title>
+    <style>
+        .table{
+            text-align: center;
+            border: 1px solid #585858;
+            display: table;
+            width: 820px;
+            font-family: "Microsoft YaHei UI";
+            font-size: 20px;
+            color: #337AB7;
+            position: relative;
+        }
+        .table-row{
+            display: table-row;
+            width: 100%;
+            height: 56px;
+        }
+        .table-cell{
+            position: relative;
+            line-height: 56px;
+            display: table-cell;
+            box-sizing: border-box;
+            width: 20%;
+            border: 1px solid #585858;
+        }
+        .head{
+            background-color: #337AB7;
+            color: #FFFFFF;
+        }
+        .head .table-cell:hover{
+            border-color:#000000 ;
+        }
+        .btns{
+            position: absolute;
+            top:29px;
+            right: 20px;
+            margin-top: -13px;
+        }
+        .arrow-up {
+            cursor:pointer;
+            width:0;
+            height:0;
+            border-left:10px solid transparent;
+            border-right:10px solid transparent;
+            border-bottom:10px solid #FFFFFF;
+        }
+        .arrow-down {
+            cursor:pointer;
+            margin-top: 6px;
+            width:0;
+            height:0;
+            border-left:10px solid transparent;
+            border-right:10px solid transparent;
+            border-top:10px solid #FFFFFF;
+        }
+        .arrow-down:hover{
+            border-top-color: #999999;
+        }
+        .arrow-up:hover{
+            border-bottom-color: #999999;
+        }
+        #input-box{
+            margin-top: 20px;
+        }
+        #input-box input{
+            width: 154px;
+        }
+        .current{
+            display: none;
+            position: absolute;
+            left: -1px;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload=function () {
+            //获取元素
+            var _table=document.getElementsByClassName("table")[0]
+            var _student=document.getElementsByClassName("student")
+            var _chssort=document.getElementsByClassName("arrow-up")[0]
+            var _mathsort=document.getElementsByClassName("arrow-up")[1]
+            var _engsort=document.getElementsByClassName("arrow-up")[2]
+            var _totalsort=document.getElementsByClassName("arrow-up")[3]
+            var _chsunsort=document.getElementsByClassName("arrow-down")[0]
+            var _mathunsort=document.getElementsByClassName("arrow-down")[1]
+            var _engunsort=document.getElementsByClassName("arrow-down")[2]
+            var _totalunsort=document.getElementsByClassName("arrow-down")[3]
+            var _inputbox=document.getElementById("input-box")
+            var _addstu=document.getElementById("addstu")
+            var _current=document.getElementsByClassName("current")[0]
+            //
+            function Student(name,chssc,mathsc,engsc) {
+                this.name=name;
+                this.mathsc=parseInt(mathsc);
+                this.chssc=parseInt(chssc);
+                this.engsc=parseInt(engsc);
+                this.total=this.chssc+this.mathsc+this.engsc;
+                school.studentlist.push(this)
+                this.no=school.studentlist.length
+            }
+            var school = {
+                studentlist:[]
+            };
+            var st_01=new Student("小明",80,90,70);
+            var st_02=new Student("小红",90,60,90);
+            var st_03=new Student("小亮",60,100,70);
+            var st_04=new Student("小智",65,100,90);
+            var st_05=new Student("小茂",80,90,90);
+            var st_06=new Student("小蓝",90,80,100);
+            var st_07=new Student("小黄",95,80,90);
+            var st_08=new Student("小金",80,80,80);
+            var st_09=new Student("小银",60,100,70);
+            var st_10=new Student("水晶",95,95,80);
+            //
+            (function () {
+                for(var i=4;i<11;i++){
+                    _table.children[i].children[0].textContent=school.studentlist[i-1].name
+                    _table.children[i].children[1].textContent=school.studentlist[i-1].chssc
+                    _table.children[i].children[2].textContent=school.studentlist[i-1].mathsc
+                    _table.children[i].children[3].textContent=school.studentlist[i-1].engsc
+                    _table.children[i].children[4].textContent=school.studentlist[i-1].total
+                }
+            })()
+            //
+            function compare(property){
+                return function(a,b){
+                    var value1 = a[property];
+                    var value2 = b[property];
+                    return value1 - value2;
+                }
+            }
+            function uncompare(property){
+                return function(a,b){
+                    var value1 = a[property];
+                    var value2 = b[property];
+                    return value2 - value1;
+                }
+            }
+            var scsort=function (comp,property) {
+                var arr = []
+                arr = school.studentlist.sort(comp(property))
+                for (var i = 0; i < arr.length; i++) {
+                    _student[i].children[0].textContent = arr[i].name;
+                    _student[i].children[1].textContent = arr[i].chssc;
+                    _student[i].children[2].textContent = arr[i].mathsc;
+                    _student[i].children[3].textContent = arr[i].engsc;
+                    _student[i].children[4].textContent = arr[i].total;
+                }
+            }
+            var chssort=function () {
+                var arr=[]
+                arr=school.studentlist.sort(compare("chssc"))
+                for(var i=0;i<arr.length;i++){
+                    _student[i].children[0].textContent=arr[i].name;
+                    _student[i].children[1].textContent=arr[i].chssc;
+                    _student[i].children[2].textContent=arr[i].mathsc;
+                    _student[i].children[3].textContent=arr[i].engsc;
+                    _student[i].children[4].textContent=arr[i].total;
+                }
+            }
+            var chsunsort=function () {
+                var arr=[]
+                arr=school.studentlist.sort(uncompare("chssc"))
+                for(var i=0;i<arr.length;i++){
+                    _student[i].children[0].textContent=arr[i].name;
+                    _student[i].children[1].textContent=arr[i].chssc;
+                    _student[i].children[2].textContent=arr[i].mathsc;
+                    _student[i].children[3].textContent=arr[i].engsc;
+                    _student[i].children[4].textContent=arr[i].total;
+                }
+            }
+            //
+            _chssort.addEventListener("click",function () {
+                scsort(compare,"chssc")
+            })
+            _chsunsort.addEventListener("click",function () {
+                scsort(uncompare,"chssc")
+            })
+            _mathsort.addEventListener("click",function () {
+                scsort(compare,"mathsc")
+            })
+            _mathunsort.addEventListener("click",function () {
+                scsort(uncompare,"mathsc")
+            })
+            _engsort.addEventListener("click",function () {
+                scsort(compare,"engsc")
+            })
+            _engunsort.addEventListener("click",function () {
+                scsort(uncompare,"engsc")
+            })
+            _totalsort.addEventListener("click",function () {
+                scsort(compare,"total")
+            })
+            _totalunsort.addEventListener("click",function () {
+                scsort(uncompare,"total")
+            })
+            _addstu.addEventListener("click",function () {
+                new Student(_inputbox.children[0].value,parseInt(_inputbox.children[1].value),parseInt(_inputbox.children[2].value),parseInt(_inputbox.children[3].value))
+                var rowdiv=document.createElement("div");
+                rowdiv.setAttribute("class", "table-row student");
+                for(var i=0;i<4;i++){
+                    var celldiv=document.createElement("div");
+                    celldiv.textContent = _inputbox.children[i].value
+                    celldiv.setAttribute("class", "table-cell");
+                    rowdiv.appendChild(celldiv)
+                }
+                var lcell=document.createElement("div");
+                lcell.textContent =parseInt(_inputbox.children[1].value)+parseInt(_inputbox.children[2].value)+parseInt(_inputbox.children[3].value)
+                lcell.setAttribute("class", "table-cell");
+                rowdiv.appendChild(lcell)
+                _table.appendChild(rowdiv)
+            })
+            //首行冻结
+            window.addEventListener("scroll",function () {
+                var _height=parseInt(_table.offsetTop)+parseInt(document.defaultView.getComputedStyle(_table, null).height)
+                if(window.scrollY>_table.offsetTop&&window.scrollY<_height){
+                    _current.style.display="table"
+                    var top=parseInt(window.scrollY)-parseInt(_table.offsetTop)-1
+                    _current.style.top=top+"px"
+                }else if(window.scrollY<_table.offsetTop){
+                    _current.style.display="none"
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+<p>
+    3123423423423424
+    234234324
+</p>
+<div class="table">
+    <div class="table-row head">
+        <div class="table-cell">姓名
+        </div>
+        <div class="table-cell">
+            语文
+            <div class="btns">
+                <div class="arrow-up"></div>
+                <div class="arrow-down"></div>
+            </div>
+        </div>
+        <div class="table-cell">
+            数学
+            <div class="btns">
+                <div class="arrow-up"></div>
+                <div class="arrow-down"></div>
+            </div>
+        </div>
+        <div class="table-cell">
+            英语
+            <div class="btns">
+                <div class="arrow-up"></div>
+                <div class="arrow-down"></div>
+            </div>
+        </div>
+        <div class="table-cell">
+            总分
+            <div class="btns">
+                <div class="arrow-up"></div>
+                <div class="arrow-down"></div>
+            </div>
+        </div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小明
+        </div>
+        <div class="table-cell">80</div>
+        <div class="table-cell">90</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">240</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小红
+        </div>
+        <div class="table-cell">90</div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">90</div>
+        <div class="table-cell">240</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <div class="table-row student">
+        <div class="table-cell">
+            小亮
+        </div>
+        <div class="table-cell">60</div>
+        <div class="table-cell">100</div>
+        <div class="table-cell">70</div>
+        <div class="table-cell">230</div>
+    </div>
+    <!-- 虚拟的表格首行 -->
+    <div class="table current">
+        <div class="table-row head">
+            <div class="table-cell">姓名
+            </div>
+            <div class="table-cell">
+                语文
+                <div class="btns">
+                    <div class="arrow-up"></div>
+                    <div class="arrow-down"></div>
+                </div>
+            </div>
+            <div class="table-cell">
+                数学
+                <div class="btns">
+                    <div class="arrow-up"></div>
+                    <div class="arrow-down"></div>
+                </div>
+            </div>
+            <div class="table-cell">
+                英语
+                <div class="btns">
+                    <div class="arrow-up"></div>
+                    <div class="arrow-down"></div>
+                </div>
+            </div>
+            <div class="table-cell">
+                总分
+                <div class="btns">
+                    <div class="arrow-up"></div>
+                    <div class="arrow-down"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="input-box">
+    <input type="text" id="input-name" placeholder="输入姓名">
+    <input type="text" id="input-chssc" placeholder="输入语文成绩">
+    <input type="text" id="input-mathsc" placeholder="输入数学成绩">
+    <input type="text" id="input-engsc" placeholder="输入英语成绩">
+    <button id="addstu">增加</button>
+</div>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+<p>2</p>
+</body>
+</html>
