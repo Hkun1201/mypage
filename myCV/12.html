@@ -1,1 +1,343 @@
-11
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../reset.css" type="text/css">
+    <style>
+        *{
+
+        }
+        .page{
+            width: 100%;
+            position: relative;
+        }
+        #page1{
+            background-color:#22B573 ;
+        }
+        #page2{
+            background-color:#708069 ;
+        }
+        .helloworld{
+            font-family: "Microsoft YaHei";
+            text-align: center;
+            color: #FFFFFF;
+            font-size: 100px;
+            position: absolute;
+            top:50%;
+            left: 50%;
+            margin-left: -400px;
+            margin-top: -150px;
+            width: 800px;
+            height: 300px;
+            line-height: 300px;
+            background: #337AB7;
+            animation:  wellcome 5s;
+            -webkit-clip-path: polygon(0% 0%, 0% 100%, 100% 70%,100% 30%);
+            clip-path: polygon(0% 0%, 0% 100%, 100% 70%,100% 30%);
+            -webkit-animation:  wellcome 5s ;
+        }
+        @keyframes wellcome {
+            0%{
+                -webkit-clip-path: polygon(0% 0%, 0% 100%, 20% 0%,20% 100%);
+                clip-path: polygon(0% 0%, 0% 100%, 20% 0%,20% 100%);
+            }
+            10%{
+                -webkit-clip-path: polygon(20% 0%, 20% 100%, 40% 0%,40% 100%);
+                clip-path: polygon(20% 0%, 20% 100%, 40% 0%,40% 100%);
+            }
+            20%{
+                -webkit-clip-path: polygon(40% 0%, 40% 100%, 60% 0%,60% 100%);
+                clip-path: polygon(40% 0%, 40% 100%, 60% 0%,60% 100%);
+            }
+            30%{
+                -webkit-clip-path: polygon(60% 0%, 60% 100%, 80% 0%,80% 100%);
+                clip-path: polygon(60% 0%, 60% 100%, 80% 0%,80% 100%);
+            }
+            40%{
+                -webkit-clip-path: polygon(80% 0%, 80% 100%, 100% 0%,100% 100%);
+                clip-path: polygon(80% 0%, 80% 100%, 100% 0%,100% 100%);
+            }
+            100%{
+                -webkit-clip-path: polygon(0% 0%, 0% 100%, 100% 70%,100% 30%);
+                clip-path: polygon(0% 0%, 0% 100%, 100% 70%,100% 30%);
+            }
+        }
+        @keyframes explotion {
+            50%{
+                -webkit-clip-path: polygon(0% 0%, 25% 20%, 10% 40%,20% 120%,15% 80%,25% 100%, 100% 100%, 100% 0%);
+                clip-path: polygon(0% 0%, 25% 20%, 10% 40%,20% 120%,15% 80%,25% 100%, 100% 100%, 100% 0%);
+            }
+            100%{
+                -webkit-clip-path: polygon(10% 0%, 25% 20%, 10% 40%,20% 120%,15% 80%,25% 100%, 100% 100%, 100% 0%);
+                clip-path: polygon(10% 0%, 25% 20%, 10% 40%,20% 120%,15% 80%,25% 100%, 100% 100%, 100% 0%);
+            }
+        }
+        #side-nav{
+            color: #FFFFFF;
+            text-align: center;
+            position: fixed;
+            right: 20px;
+            top:50%;
+            width: 80px;
+            background-color:rgba(0, 0, 0, 0.2);
+        }
+        .back-to-top{
+            height: 50px;
+            width: 100%;
+        }
+        .page-down{
+            display: none;
+            text-align: center;
+            line-height: 50px;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            margin-left: -95px;
+            width: 190px;
+            height: 50px;
+            background-color:rgba(0, 0, 0, 0.2);
+        }
+        .arrow-down{
+            margin: 0 auto;
+            margin-top: 10px;
+            display: block;
+            width: 100px;
+            height: 30px;
+            background-color: #fff;
+            -webkit-clip-path: polygon(0% 0%,50% 100%,100% 0%,90% 0%,10% 0%);
+            clip-path: polygon(0% 0%,50% 100%,100% 0%,90% 0%,10% 0%);
+        }
+        #popover{
+            position: absolute;
+            left: 0;
+            top:0;
+        }
+    </style>
+    <script>
+        window.onload=function () {
+            //获取所需的元素
+            var _page=document.getElementsByClassName("page");
+            var _paged=document.getElementsByClassName("page-down");
+            var _hello=document.getElementsByClassName("helloworld")[0];
+            var _popOver=document.getElementById("popover")
+            //封一些方法
+//            var sethello=
+                //
+            for(var i=0;i<_page.length;i++){
+                _page[i].style.height=document.documentElement.clientHeight+"px"
+            }
+            window.addEventListener("resize",function () {
+                for(var i=0;i<_page.length;i++){
+                    _page[i].style.height=document.documentElement.clientHeight+"px"
+                }
+            })
+            //浮出层
+            _popOver.width=document.documentElement.clientWidth
+            _popOver.height=document.documentElement.clientHeight
+            var ctx=_popOver.getContext("2d")
+            //背景色
+            ctx.fillStyle="#FEFBD2"
+            ctx.fillRect(0,0,_popOver.width,_popOver.height);
+            var popOver={
+                polygon:"",
+                animeState:"",
+                num:"",
+                imgData:[],
+                imgsPrensent:[],
+                imgs:[],
+                stepImgs:[],
+                imgsReady:0,
+                //设置背景人物
+                set:function () {
+                    //确定窗口高度，以120像素的模数取人物的数量
+                    popOver.num=Math.floor(_popOver.height/120)
+                    //载入图片资源
+                    for (var i=0;i<popOver.num;i++) {
+                        popOver.imgs.push(new Image)
+                        popOver.stepImgs.push(new Image)
+//                        console.log(popOver.imgData[i])
+                        if (i<9) {
+                            popOver.imgs[i].src = "img/pm00" + (i+1) + "_1.png"
+                            popOver.stepImgs[i].src = "img/pm00" + (i+1) + "_2.png"
+                        }else {
+                            popOver.imgs[i].src = "img/pm0" + (i+1) + "_1.png"
+                            popOver.stepImgs[i].src = "img/pm0" + (i+1) + "_2.png"
+                        }
+                        //加入位置数据
+                        popOver.imgData.push((i%2===0)?0:_popOver.width-50)
+                        //加上载入完成事件
+                        popOver.imgs[i].onload=function () {
+                            popOver.imgsReady++
+                            popOver.render()
+                        }
+                    }
+                    popOver.imgsPrensent=popOver.imgs
+                },
+                clip:function () {//裁剪
+                    var getpolygon=function () {
+                        popOver.polygon=""
+                        console.log(popOver.num)
+                        for (var i=0;i<popOver.num;i++){
+                            if (i%2===0) {
+                                if(i===popOver.num-1){//最下一点的情况
+                                    popOver.polygon += popOver.imgData[i] + " " + (i * 120) + ","
+                                    popOver.polygon += popOver.imgData[i] + " " + "100%" + ","
+                                }else {//其他情况
+                                    popOver.polygon += popOver.imgData[i] + " " + (i * 120) + ","
+                                    popOver.polygon += popOver.imgData[i] + " " + ((i + 1) * 120) + ","
+                                }
+                            }else {
+                                if(i===popOver.num-1){//最下一点的情况
+                                    popOver.polygon += "0%" + " " + (i * 120) + ","
+                                    popOver.polygon += "0%" + " " + "100%" + ","
+                                }else {
+                                    popOver.polygon += "0%" + " " + (i * 120) + ","
+                                    popOver.polygon += "0%" + " " + ((i + 1) * 120) + ","
+                                }
+                            }
+                        }
+                        for (var j=popOver.num-1;j>-1;j--){
+                            if (j%2===0) {
+                                if(j===popOver.num-1){//最下一点的情况
+                                    popOver.polygon += "100% " + "100%" + ","
+                                    popOver.polygon += "100% " + (j * 120) + ","
+                                }else {
+                                    popOver.polygon += "100% " + ((j + 1) * 120) + ","
+                                    popOver.polygon += "100% " + (j * 120) + ","
+                                }
+                            }else {
+                                if(j===popOver.num-1){//最下一点的情况
+                                    popOver.polygon += (popOver.imgData[j] + 50) + " " + "100%" + ","
+                                    popOver.polygon += (popOver.imgData[j] + 50) + " " + (j * 120) + ","
+                                }else {
+                                    popOver.polygon += (popOver.imgData[j] + 50) + " " + ((j + 1) * 120) + ","
+                                    popOver.polygon += (popOver.imgData[j] + 50) + " " + (j * 120) + ","
+                                }
+                            }
+                        }
+                        popOver.polygon="polygon("+popOver.polygon.substring(0,popOver.polygon.length-1)+")"
+                    }
+                    getpolygon()
+                    console.log(popOver.polygon)
+                    _popOver.style.webkitClipPath=popOver.polygon
+                    _popOver.style.clipPath=popOver.polygon
+                },
+                render:function () {
+                    //背景
+                    if (popOver.imgsReady===popOver.num) {
+                        for (var i=0;i<popOver.num;i++){
+                            if (i%2===0) {
+                                if (i===popOver.num-1){
+                                    ctx.fillStyle="#FEFBD2"
+                                    ctx.fillRect(popOver.imgData[i], i * 120, _popOver.width - popOver.imgData[i], _popOver.height-120*(popOver.num-1))
+                                    ctx.fillStyle="#708069"
+                                    ctx.fillRect(0, i * 120, popOver.imgData[i], _popOver.height-120*(popOver.num-1))
+                                }else {
+                                    ctx.fillStyle = "#FEFBD2"
+                                    ctx.fillRect(popOver.imgData[i], i * 120, _popOver.width - popOver.imgData[i],120)
+                                    ctx.fillStyle = "#708069"
+                                    ctx.fillRect(0, i * 120, popOver.imgData[i],120)
+                                }
+                            }else {
+                                if (i===popOver.num-1){
+                                    ctx.fillStyle = "#FEFBD2"
+                                    ctx.fillRect(0, i * 120, popOver.imgData[i] + 50, _popOver.height-120*(popOver.num-1))
+                                    ctx.fillStyle = "#708069"
+                                    ctx.fillRect(popOver.imgData[i] + 50, i * 120, _popOver.width - popOver.imgData[i] - 50, _popOver.height-120*(popOver.num-1))
+                                }else {
+                                    ctx.fillStyle = "#FEFBD2"
+                                    ctx.fillRect(0, i * 120, popOver.imgData[i] + 50, 120)
+                                    ctx.fillStyle = "#708069"
+                                    ctx.fillRect(popOver.imgData[i] + 50, i * 120, _popOver.width - popOver.imgData[i] - 50, 120)
+                                }
+                            }
+                            //人物
+                            ctx.drawImage(popOver.imgsPrensent[i], popOver.imgData[i], i*120+0.5*(120-popOver.imgs[i].height),popOver.imgsPrensent[i].width*2,popOver.imgsPrensent[i].height*2)
+                        }
+                    }
+                },
+                hideAnime:function () {
+                    //结束条件
+                    if (popOver.imgData[0]>=_popOver.width){
+                        /*
+                        var i=10,rgba
+                        cancelAnimationFrame(popOver.animeState)
+                        var fadeout=setInterval(function () {
+                            rbga="rgba(112,128,105,"+i+")"
+                            ctx.fillStyle="rgba(112,128,105,i)"
+                            ctx.fillRect(0, 0, _popOver.width, _popOver.height)
+                            i--
+                            if (i===0) {
+                                clearInterval(fadeout)
+                                */
+                                _popOver.style.display = "none"
+//                            }
+
+//                        },100)
+                    }
+                    popOver.update()
+//                    popOver.clip()
+                    popOver.render()
+                    popOver.animeState=requestAnimationFrame(popOver.hideAnime)
+                },
+                update:function () {//用于更新所有人物位置的数据
+                    if (popOver.imgData[0]%Math.floor(_popOver.width/20)===0) {
+                        if (popOver.imgsPrensent === popOver.imgs) {
+                            popOver.imgsPrensent = popOver.stepImgs
+                        } else {
+                            popOver.imgsPrensent = popOver.imgs
+                        }
+                    }
+                    for (var i=0;i<popOver.num;i++){
+                        if (_popOver.width>800){
+                            if (i % 2 === 0) {
+                                popOver.imgData[i] += Math.floor(_popOver.width / 200)
+                            } else {
+                                popOver.imgData[i] -= Math.floor(_popOver.width / 200)
+                            }
+                        }else {
+                            if (i % 2 === 0) {
+                                popOver.imgData[i] += Math.floor(_popOver.width / 120)
+                            } else {
+                                popOver.imgData[i] -= Math.floor(_popOver.width / 120)
+                            }
+                        }
+                    }
+                }
+            }
+            //动画结束出现翻页
+            _hello.addEventListener("webkitAnimationEnd",function () {
+                for(var i=0;i<_paged.length;i++) {
+                    _paged[i].style.display = "block";
+                }
+            })
+            popOver.set()
+            setTimeout(function () {
+                popOver.hideAnime()
+            },1000)
+        }
+    </script>
+</head>
+<body>
+    <div class="page" id="page1">
+        <div class="helloworld">
+            <span>Hello World</span>
+        </div>
+        <a class="page-down" href="#page2">
+            <i class="arrow-down"></i>
+        </a>
+    </div>
+<div class="page" id="page2">
+    <canvas id="popover"></canvas>
+    123
+</div>
+<div id="side-nav">
+    <div class="back-to-top">
+        back to top
+    </div>
+    <div class="contactme">
+    </div>
+</div>
+</body>
+</html>
