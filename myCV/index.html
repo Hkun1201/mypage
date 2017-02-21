@@ -3,55 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Title</title>
+    <title>前端_狄成竹</title>
     <link rel="stylesheet" href="../reset.css" type="text/css">
     <style>
         *{
-
+            font-family:”Microsoft YaHei”,Arial,Helvetica,sans-serif,”宋体”;
         }
         .page{
+            font-family:”Microsoft YaHei”,Arial,Helvetica,sans-serif,”宋体”;
             width: 100%;
             position: relative;
         }
+        .main-nav{
+            text-align: center;
+            width: 100%;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background-color:rgba(0, 0, 0, 0.6);
+            z-index: 999;
+        }
+        .main-nav a{
+            width: 100%;
+            height: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            color: white;
+        }
+        .contont{
+            margin: 0 auto;
+            width: 80%;
+            display: flex;
+        }
+        .nav_list{
+            color: white;
+            flex: 1;
+        }
+        .nav_list:hover{
+            background-color:rgba(0, 0, 0, 0.2);
+        }
+        .mygames{
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
         #page1{
+            font-family:”Microsoft YaHei”,Arial,Helvetica,sans-serif,”宋体”;
             background-color:#22B573 ;
         }
         #page2{
-            font-family: "Microsoft YaHei";
-            background-color:#AF743C ;
+            font-family:”Microsoft YaHei”,Arial,Helvetica,sans-serif,”宋体”;
+            overflow: hidden;
+            background-color:#26B1B6 ;
             font-size: 16px;
         }
-        #page2>div{
-            width: 70%;
-            margin: 0 auto;
+        #page3{
+            font-family:”Microsoft YaHei”,Arial,Helvetica,sans-serif,”宋体”;
+            background-color: #ED6461;
         }
+        #page4{
+            background-color: #238A52;
+        }
+        #page5{
+            font-family:”Microsoft YaHei”,Arial,Helvetica,sans-serif,”宋体”;
+            background-color: #129DE7;
+            position: relative;
+        }
+        .page div{
+            margin: 0 auto;
+            text-align: center;
+        }
+        .page h5{
+              text-align: left;
+            letter-spacing:2px;
+          }
         #page2 p{
-            margin-bottom: 20px;
+            margin-bottom: 12px;
             text-align: left;
         }
-        #page2 h5{
-            text-align:center;
-            margin-bottom: 20px;
+        #page2{
+            font-size: 14px;
+        }
+        #page2 a:visited {
+            color: black;
         }
         #page2 h5,#page2 p{
-            background-color:rgba(255,255,255,0.8) ;
+            margin-bottom: 10px;
+        }
+        #myphoto{
+            position: relative;
+            margin-top: 5%;
+        }
+        .basic-info>p{
+            text-align: left;
+        }
+        .basic-info{
+            font-size: 20px;
+            width: 45%;
+            float: left;
+        }
+
+        .self-intro{
+            line-height: 20px;
+            padding: 10px;
+            letter-spacing: 2px;;
+            text-align: center;
+            width: 50%;
+            float: right;
+        }
+        .self-intro p{
+            font-size: 20px;
+            line-height: 40px;
+        }
+        .wrap{
+            position: relative;
+            top:10%;
+            color: white;
+            margin: 0 auto;
+            width: 90%;
+            zoom: 1;
+        }
+        .wrap :after{
+            content:".";
+            display:block;
+            height:0;
+            clear:both;
+            visibility:hidden;
+        }
+        #page2 h5{
+            margin-bottom: 40px;
+        }
+        #page2 h5,#page2 p{
+            /*background-color:rgba(255,255,255,0.8) ;*/
             box-sizing: border-box;
             padding: 10px;
-            border: 1px solid blanchedalmond;
+            /*border: 1px solid blanchedalmond;*/
             border-radius:5px ;
         }
         #links{
+            position: relative;
+            top:15%;
             box-sizing: border-box;
-            border: 1px solid blanchedalmond;
             border-radius:5px ;
+        }
+        #links a{
+            color: black;
+            padding: 20px;
+
+        }
+        #links div{
+            margin: 0 auto;
         }
         #links,#links p{
             text-align: center;
             margin-bottom: 0px;
         }
+        #links div p{
+            line-height: 30px;
+        }
         #links>div{
-            width: 30%;
-            float: left;
+            width: 70%;
+            margin-bottom: 20px;
         }
         #links>div>a{
             background-color:rgba(255,255,255,0.8) ;
@@ -61,6 +175,50 @@
         }
         #links :after{
             display:block; content:"clear"; height:0; clear:both; overflow:hidden; visibility:hidden
+        }
+        #me{
+            -webkit-clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+            clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+        }
+        .skills{
+            position: relative;
+            top:20%;
+            font-size: 36px;
+            color: white;
+            width: 80%;
+            display: flex;
+        }
+        .skills li{
+            padding: 10px;
+        }
+        .skills h4{
+            padding: 5px;
+            background-color: white;
+            color: #ED6461;
+        }
+        .main,.sub,.others{
+            flex:1;
+            border: 1px solid white;
+        }
+        .sub{
+            margin-left: 5%;
+            margin-right: 5%;
+        }
+        .contactme{
+            top: 35%;
+            margin: 0 auto;
+            position: relative;
+        }
+        .contactme h5{
+            font-weight: bolder;
+            color: white;
+            line-height: 40px;
+            font-size: 30px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .contactme a{
+            color: white;
         }
         .helloworld{
             font-family: "Microsoft YaHei";
@@ -190,15 +348,71 @@
                 clip-path: polygon(0% 0%, 0% 100%, 100% 70%,100% 30%);
                 -webkit-animation:  wellcome 5s ;
             }
-            #page2{
-                font-size: 14px;
+            .page h5{
+                letter-spacing:0;
             }
-            #page2 a:visited {
-                color: black;
+            .wrap{
+                z-index: 0;
+                position: relative;
+                top: 20px;
+                width: 90%;
             }
             #page2 h5,#page2 p{
-                padding: 2px;
-                margin-bottom: 10px;
+                padding: 0;
+            }
+            .self-intro {
+                padding: 0;
+                letter-spacing: 0;;
+            }
+            .skills {
+                font-size: 18px;
+            }
+            .nav_list {
+                font-size: 14px;
+                padding-top: 1px;
+                padding-bottom: 1px;
+            }
+            .contont{
+                width: 100%;
+            }
+            .contactme h5{
+                color: white;
+                line-height: 30px;
+                font-size: 20px;
+                text-align: center;
+                margin-bottom: 40px;
+            }
+            #links{
+                top:12%;
+            }
+            #links>div{
+                width: 90%;
+            }
+            #links a{
+                padding: 0;
+            }
+            #links div p{
+                font-size: 14px;
+                line-height: 20px;
+            }
+            .skills{
+                font-size: 14px;
+            }
+            .self-intro{
+                line-height: 20px;
+                letter-spacing: 2px;;
+                text-align: center;
+                width: 60%;
+                float: right;
+            }
+            .basic-info{
+                font-size: 12px;
+                width: 40%;
+                float: left;
+            }
+            .self-intro p{
+                font-size: 13px;
+                line-height: 20px;
             }
         }
     </style>
@@ -388,24 +602,24 @@
                                     if (i === popOver.num - 1) {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(popOver.imgData[i], i * 60, _popOver.width - popOver.imgData[i], _popOver.height - 60 * (popOver.num - 1))
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i], _popOver.height - 60 * (popOver.num - 1))
                                     } else {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(popOver.imgData[i], i * 60, _popOver.width - popOver.imgData[i], 60)
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i], 60)
                                     }
                                 } else {
                                     if (i === popOver.num - 1) {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i] + 50, _popOver.height - 60 * (popOver.num - 1))
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(popOver.imgData[i] + 50, i * 60, _popOver.width - popOver.imgData[i] - 50, _popOver.height - 60 * (popOver.num - 1))
                                     } else {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i] + 50, 60)
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(popOver.imgData[i] + 50, i * 60, _popOver.width - popOver.imgData[i] - 50, 60)
                                     }
                                 }
@@ -421,24 +635,24 @@
                                     if (i === popOver.num - 1) {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(popOver.imgData[i], i * 60, _popOver.width - popOver.imgData[i], _popOver.height - 60 * (popOver.num - 1))
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i], _popOver.height - 60 * (popOver.num - 1))
                                     } else {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(popOver.imgData[i], i * 60, _popOver.width - popOver.imgData[i], 60)
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i], 60)
                                     }
                                 } else {
                                     if (i === popOver.num - 1) {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i] + 50, _popOver.height - 60 * (popOver.num - 1))
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(popOver.imgData[i] + 50, i * 60, _popOver.width - popOver.imgData[i] - 50, _popOver.height - 60 * (popOver.num - 1))
                                     } else {
                                         ctx.fillStyle = "#FEFBD2"
                                         ctx.fillRect(0, i * 60, popOver.imgData[i] + 50, 60)
-                                        ctx.fillStyle = "#AF743C"
+                                        ctx.fillStyle = "#26B1B6"
                                         ctx.fillRect(popOver.imgData[i] + 50, i *60, _popOver.width - popOver.imgData[i] - 50, 60)
                                     }
                                 }
@@ -547,6 +761,15 @@
     </script>
 </head>
 <body>
+<div class="main-nav">
+    <div class="contont">
+        <div class="nav_list" id="to_page1"><a  href=#page1>首页</a></div>
+        <div class="nav_list" id="to_page2"><a href="#page2">个人资料</a></div>
+        <div class="nav_list" id="to_page3"><a href="#page3">专业技能</a></div>
+        <div class="nav_list" id="to_page5"><a href="#page4">小游戏</a></div>
+        <div class="nav_list" id="my_games"><a href="#page5">联系我</a></div>
+    </div>
+</div>
 <div class="page" id="page1">
     <div class="helloworld">
         <span>Hello World</span>
@@ -556,41 +779,101 @@
     </a>
 </div>
 <div class="page" id="page2">
-    <canvas id="popover"></canvas>
-    <div>
-        <h5>狄成竹 男</h5>
-        <h5>学历：本科</h5>
-        <h5>电话：<a href="tel:13812677305" style="display: inline">13812677305</a></h5>
-        <h5>邮箱：chen961144@126.com</h5>
-        <h5>毕业院校：苏州科技大学 专业：土木工程</h5>
-        <p style="font-weight:bolder ">主要技能：熟悉html/html5 css 原生javascript jQuery，了解vue/angular框架前后端分离工作模式</p>
-        <p>次要技能：掌握autocad Rhinoceros Revit sketchup等建模软件；建筑/工程相关知识；日语二级,持续学习中</p>
-        <p>个人简介：以canvas为契机开始接触前端，对把各种想法实现在浏览器中十分感兴趣，喜爱前端工作，关注前端新技术</p>
-        <p>项目经历：原从事建筑设计以及建筑信息化模型（Building-Information-Model简称BIM）工作，后兼负责公司网站及公众号的BIM技术推广的前端工作</p>
-        <div id="links">
-            <p style="background-color:transparent;border: 0px">几个有趣的轮子</p>
-            <div>
-                <a href="https://hkun1201.github.io/mypage/html2.html">
-                    <i id="gameicon1" style="background-position: 0px 0px;display: block;margin: 0 auto"></i>
-                    <p>妙娃草的进化之旅(移动端更佳)</p>
-                    <p>原生js实现A*寻路算法</p>
-                </a>
-            </div>
-            <div style="margin-left: 5%">
-                <a href="https://hkun1201.github.io/ife_tasks/36/task_36.html">
-                    <div id="cube">
-                    </div>
-                    <p>听指令的方块(PC端更佳)</p>
-                </a>
-            </div>
-            <div style="margin-left: 5%">
-               <a href="https://github.com/Hkun1201/ife_tasks">
-                   <img src="img/ifelogo.png" style="display: block;margin: 0 auto" width="40" height="40">
-                   <p>一些百度前端学院的练手demo</p>
-               </a>
-            </div>
-        </div>
+    <!--<canvas id="popover"></canvas>-->
+    <div id="myphoto">
+        <img src="img/me.png" id="me">
+    </div>
+    <div class="wrap">
+    <div class="basic-info">
+        <h5>职位|前端工程师</h5>
+        <h5>姓名|狄成竹</h5>
+        <h5>学历|本科</h5>
+        <h5>院校|苏州科技大学</h5>
+        <h5>专业|土木工程</h5>
+    </div>
+    <div class="self-intro">
+        <p>以canvas为契机开始接触前端，对把各种想法实现在浏览器中十分感兴趣，喜爱前端工作，享受程序最终顺利上线的快感</p>
+        <p>原从事建筑设计以及建筑信息化模型（Building-Information-Model简称BIM）工作，后兼负责公司网站及公众号的BIM技术推广的前端工作</p>
+    </div>
+    </div>
+</div>
+<div class="page" id="page3">
+    <div class="skills">
+        <div class="main">
+            <h4>
+                熟悉
+            </h4>
+            <ul>
+                <li>HTML(5)</li>
+                <li>CSS(3)</li>
+                <li>Javascript</li>
+                <li>jQuery</li>
+                <li>Bootstrap</li>
+            </ul>
 
+        </div>
+        <div class="sub">
+            <h4>
+                了解
+            </h4>
+            <ul>
+                <li>angular.js</li>
+                <li>vue.js</li>
+                <li>three.js</li>
+            </ul>
+        </div>
+        <div class="others">
+            <h4>
+                其他
+            </h4>
+            <ul>
+                <li>AutoCAD</li>
+                <li>Rhinoceros </li>
+                <li>SketchUp</li>
+                <li>Revit</li>
+                <li>PS</li>
+                <li>日语二级</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="page" id="page4">
+    <div id="links">
+        <div>
+            <a href="https://hkun1201.github.io/mypage/html2.html">
+                <i id="gameicon1" style="background-position: 0px 0px;display: block;margin: 0 auto"></i>
+                <p>妙娃草的进化之旅</p>
+                <p>canvas小游戏</p>
+                <p>随机生成一个必有通路的迷宫</p>
+                <p>在原生js上实现A*寻路算法</p>
+                <p>（移动端更佳）</p>
+            </a>
+        </div>
+        <div>
+            <a href="https://hkun1201.github.io/ife_tasks/36/task_36.html">
+                <div id="cube">
+                </div>
+                <p>听指令的方块(PC端更佳)</p>
+                <p>操作DOM的小游戏</p>
+                <p>选择不同的指令使方块运动起来</p>
+                <p>输入复数指令使方块连续运动</p>
+                <p>按下自动巡航功能使方块停不下来！</p>
+                <p>(PC端更佳)</p>
+            </a>
+        </div>
+        <div>
+            <a href="https://github.com/Hkun1201/ife_tasks">
+                <img src="img/ifelogo.png" style="display: block;margin: 0 auto" width="40" height="40">
+                <p>其他百度前端学院的练手demo</p>
+            </a>
+        </div>
+    </div>
+</div>
+<div class="page" id="page5">
+    <div class="contactme">
+        <h5>contact me|联系我吧</h5>
+        <h5><a href="tel:13812677305" style="display: inline">TEL|13812677305</a></h5>
+        <h5>E-mail|chen961144@126.com</h5>
     </div>
 </div>
 <div id="side-nav">
@@ -599,9 +882,12 @@
     </div>
     <div class="contactme">
         <a href="https://github.com/Hkun1201">
-            <p>github</p>
             <svg aria-hidden="true" class="octicon octicon-mark-github" height="32" version="1.1" viewBox="0 0 16 16" width="32"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
         </a>
+    </div>
+    <div>
+        <div style="height: 40px;line-height: 40px;font-size: 16px">狄成竹</div>
+
     </div>
 </div>
 </body>
