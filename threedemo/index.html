@@ -57,7 +57,7 @@
                     console.log(Math.round(percentComplete,2)+"%downloaded")
                 }
             }
-            
+
             var onError=function (xhr) {
                 console.log("ERROR")
             }
@@ -69,33 +69,34 @@
                 scene.add(object)
             },onProgress,onError)
             /*
-            var mtlLoader=new THREE.MTLLoader()
-            mtlLoader.setPath("resource/")
-            mtlLoader.load("Fan.mtl",function (materials) {
-                materials.preload()
-                var objLoader=new THREE.OBJLoader()
-                objLoader.setMaterials(materials)
-                objLoader.setPath("resource/")
-                objLoader.load("Fan.obj",function (object) {
-                    object.position.y=0
-                    scene.add(object)
-                },onProgress,onError)
-            })
-            */
+             var mtlLoader=new THREE.MTLLoader()
+             mtlLoader.setPath("resource/")
+             mtlLoader.load("Fan.mtl",function (materials) {
+             materials.preload()
+             var objLoader=new THREE.OBJLoader()
+             objLoader.setMaterials(materials)
+             objLoader.setPath("resource/")
+             objLoader.load("Fan.obj",function (object) {
+             object.position.y=0
+             scene.add(object)
+             },onProgress,onError)
+             })
+             */
             //渲染
             renderer=new THREE.WebGLRenderer({alpha:true})
             renderer.setPixelRatio(window.devicePixelRatio)
             renderer.setSize(window.innerWidth,window.innerHeight)
             container.appendChild(renderer.domElement)
         }
-        window.onload=function () {
-            init()
-        }
         var ren=function () {
             renderer.render(scene,camera)
             requestAnimationFrame(arguments.callee)
         }
-        ren()
+        window.onload=function () {
+            init()
+            ren()
+        }
+
     </script>
 </head>
 <body>
