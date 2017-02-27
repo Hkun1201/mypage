@@ -87,14 +87,14 @@
             renderer.setPixelRatio(window.devicePixelRatio)
             renderer.setSize(window.innerWidth,window.innerHeight)
             container.appendChild(renderer.domElement)
-        }
-        var ren=function () {
-            renderer.render(scene,camera)
-            requestAnimationFrame(arguments.callee)
+            var ren=function () {
+                renderer.render(scene,camera)
+                requestAnimationFrame(arguments.callee)
+            }
+                ren()
         }
         window.onload=function () {
             init()
-            ren()
         }
 
     </script>
