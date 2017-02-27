@@ -47,7 +47,7 @@
             scene.add(ambient)
             //平行光
             var directionalLight=new THREE.DirectionalLight(0xffeedd)
-            directionalLight.position.set(0,1,0).normalize()
+            directionalLight.position.set(0,10000,0).normalize()
             scene.add(directionalLight)
 
             //模型
@@ -64,15 +64,10 @@
 
             var objLoader=new THREE.OBJLoader()
             objLoader.setPath("resource/")
-            objLoader.load("cube.obj",function (object) {
+            objLoader.load("Fan.obj",function (object) {
                 object.position.y = 0
                 scene.add(object)
             },onProgress,onError)
-            //对照模型
-            var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-			var cube = new THREE.Mesh( geometry, material );
-			scene.add( cube );
             /*
             var mtlLoader=new THREE.MTLLoader()
             mtlLoader.setPath("resource/")
@@ -88,10 +83,11 @@
             })
             */
             //渲染
-            renderer=new THREE.WebGLRenderer()
+            renderer=new THREE.WebGLRenderer({alpha:true})
             renderer.setPixelRatio(window.devicePixelRatio)
             renderer.setSize(window.innerWidth,window.innerHeight)
             container.appendChild(renderer.domElement)
+            renderer.render(scene,camera)
         }
         window.onload=function () {
             init()
