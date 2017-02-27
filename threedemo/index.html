@@ -64,7 +64,7 @@
 
             var objLoader=new THREE.OBJLoader()
             objLoader.setPath("resource/")
-            objLoader.load("Fan.obj",function (object) {
+            objLoader.load("cube.obj",function (object) {
                 object.position.y = 0
                 scene.add(object)
             },onProgress,onError)
