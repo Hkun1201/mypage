@@ -64,7 +64,7 @@
 
             var objLoader=new THREE.OBJLoader()
             objLoader.setPath("resource/")
-            objLoader.load("Fan.obj",function (object) {
+            objLoader.load("cube.obj",function (object) {
                 object.position.y = 0
                 scene.add(object)
             },onProgress,onError)
@@ -87,11 +87,15 @@
             renderer.setPixelRatio(window.devicePixelRatio)
             renderer.setSize(window.innerWidth,window.innerHeight)
             container.appendChild(renderer.domElement)
-            renderer.render(scene,camera)
         }
         window.onload=function () {
             init()
         }
+        var ren=function () {
+            renderer.render(scene,camera)
+            requestAnimationFrame(arguments.callee)
+        }
+        ren()
     </script>
 </head>
 <body>
