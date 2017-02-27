@@ -62,6 +62,14 @@
                 console.log("ERROR")
             }
 
+            var objLoader=new THREE.OBJLoader()
+            objLoader.setMaterials(materials)
+            objLoader.setPath("resource/")
+            objLoader.load("Fan.obj",function (object) {
+                object.position.y = 0
+                scene.add(object)
+            },onProgress,onError)
+            /*
             var mtlLoader=new THREE.MTLLoader()
             mtlLoader.setPath("resource/")
             mtlLoader.load("Fan.mtl",function (materials) {
@@ -74,7 +82,7 @@
                     scene.add(object)
                 },onProgress,onError)
             })
-
+            */
             //渲染
             renderer=new THREE.WebGLRenderer()
             renderer.setPixelRatio(window.devicePixelRatio)
