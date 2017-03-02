@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>three.js</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+
+<body>
+<script src="TrackballControls.js"></script>
+<script type="text/javascript" src="three.min.js"></script>
+<script type="text/javascript" src="dat.gui.min.js"></script>
+<script type="text/javascript" src="three.min.js"></script>
+<script type="text/javascript" src="OBJLoader.js"></script>
+<script type="text/javascript" src="MTLLoader.js"></script>
+<script>
+    var renderer, scene, camera, light;
+    var INTERSECTED;
+    var raycaster;
+    var mouse;
+    var intersects = [];
+
+    function init() {
+        renderer = new THREE.WebGLRenderer({
+            antialias: true
+        });
+
+        renderer.setClearColor(0x0f0f0f0);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        //
+        scene = new THREE.Scene();
+        //
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.lookAt(new THREE.Vector3(20, 0, 20));
+        camera.position.set(-100, 25, -100);
+        //
+        light = new THREE.AmbientLight(0xffffff);
+        scene.add(light);
+        //
+        raycaster = new THREE.Raycaster();
+        mouse = new THREE.Vector2();
+        //
+        document.body.appendChild(renderer.domElement);
+        //
+        document.addEventListener('mousemove', onDocumentMouseMove, false);
+        //
+        creatCube();
+        //
+        render();
+
+        controls = new THREE.TrackballControls( camera );
+        controls.rotateSpeed = 1.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.noZoom = false;
+        controls.noPan = false;
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+
+    }
+
+    function onDocumentMouseMove(event) {
+        event.preventDefault();
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    }
+
+    scene = new THREE.Scene();
+
+    //加载材质&模型
+    var mtlLoader = new THREE.MTLLoader()
+    mtlLoader.setPath("resource/")
+
+    mtlLoader.load("Fan.mtl", function (materials) {
+        materials.preload()
+        var objLoader = new THREE.OBJLoader()
+        objLoader.setMaterials(materials)
+        objLoader.setPath("resource/")
+        objLoader.load("0.0001Fan.obj", function (object) {
+            fan = object
+            scene.add(object)
+        })
+    })
+
+    mtlLoader.load("Outer.mtl", function (materials) {
+        materials.preload()
+        var objLoader = new THREE.OBJLoader()
+        objLoader.setMaterials(materials)
+        objLoader.setPath("resource/")
+        objLoader.load("0.0001Outer.obj", function (object) {
+            outer = object
+            scene.add(object)
+        })
+    })
+
+
+    function creatCube() {
+        for (var i = 0; i < 50; i++) {
+            var geometry = new THREE.CubeGeometry(4, 4, 4);
+            var material = new THREE.MeshBasicMaterial({
+                color: Math.random() * 0xffffff,
+                opacity: 0.5
+            });
+            var mesh = new THREE.Mesh(geometry, material);
+            mesh.position.x = Math.random() * 100 - 10;
+            mesh.position.y = Math.random() * 100 - 10;
+            mesh.position.z = Math.random() * 100 - 10;
+            scene.add(mesh);
+        }
+    }
+
+    function render() {
+        requestAnimationFrame(render);
+        renderer.render(scene, camera);
+        //
+        controls.update();
+        raycaster.setFromCamera(mouse, camera);
+        var intersects = raycaster.intersectObjects(scene.children);//取得射线与场景中所有物体相交的合集
+        if (intersects.length > 0) {//合集中存在物体的情况
+            if (INTERSECTED != intersects[0].object){//排除已经选中的物体
+                if (INTERSECTED){//存在已选中物体的情况
+                    INTERSECTED.material.color.setHex(INTERSECTED.currentHex);//把已经选中的物体颜色恢复成原来的
+                }
+                //
+                INTERSECTED = intersects[0].object;//把当前选中的物体存入
+                //
+                INTERSECTED.currentHex = INTERSECTED.material.color.getHex();//把当前选中的物体颜色存入
+                //
+                INTERSECTED.material.color.set( 0xff0000 );//把当前物体的颜色改变为高亮（红色）
+            }
+        } else {//鼠标移入空区域
+            if (INTERSECTED){
+                INTERSECTED.material.color.set(INTERSECTED.currentHex);//把已经选中的物体颜色恢复成原来的
+            }
+            INTERSECTED = null;//清空临时对象
+        }
+    }
+    init();
+</script>
+</body>
+
+</html>

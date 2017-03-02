@@ -1,0 +1,156 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>three.js raycast - texture</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+        body {
+            color: #808080;
+            font-family:Monospace;
+            font-size:13px;
+            text-align:center;
+
+            background-color: #ffffff;
+            margin: 0px;
+            overflow: hidden;
+        }
+
+        #info {
+            position: absolute;
+            top: 0px; width: 100%;
+            padding: 5px;
+        }
+
+        #controls {
+            position: absolute;
+            text-align:left;
+            top: 40px;
+            left: 5px;
+            padding: 5px;
+        }
+
+        .control {
+            margin-bottom: 3px;
+        }
+
+        input {
+            width: 50px;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<div id="info"><a href="http://threejs.org" target="_blank">three.js</a> - raycast texture<br>Left to right: buffer geometry - geometry - indexed buffer geometry</div>
+<fieldset id="controls">
+    <legend>Circle</legend>
+    <div class="control">
+        WrapS : <select onchange="setwrapS(this)">
+        <option value="ClampToEdgeWrapping">ClampToEdgeWrapping</option>
+        <option value="RepeatWrapping" selected>RepeatWrapping</option>
+        <option value="MirroredRepeatWrapping">MirroredRepeatWrapping</option>
+    </select>
+    </div>
+    <div class="control">
+        WrapT : <select onchange="setwrapT(this)">
+        <option value="ClampToEdgeWrapping">ClampToEdgeWrapping</option>
+        <option value="RepeatWrapping" selected>RepeatWrapping</option>
+        <option value="MirroredRepeatWrapping">MirroredRepeatWrapping</option>
+    </select>
+    </div>
+    <div class="control">
+        Offset : X <input type="number" value="0" step="0.05" onchange="setOffsetU(this)" />
+        Y <input type="number" value="0" step="0.05" onchange="setOffsetV(this)" /><br />
+    </div>
+    <div class="control">
+        Repeat : X <input type="number" value="1" step="0.1" onchange="setRepeatU(this)" />
+        Y <input type="number" value="1" step="0.1" onchange="setRepeatV(this)" />
+    </div>
+</fieldset>
+<script src="three.min.js"></script>
+<script>
+
+    CanvasTexture = function ( parentTexture ) {
+
+        this._canvas = document.createElement( "canvas" );
+        this._canvas.width = this._canvas.height = 1024;
+        this._context2D = this._canvas.getContext( "2d" );
+
+        if ( parentTexture ) {
+
+            this._parentTexture.push( parentTexture );
+            parentTexture.image = this._canvas;
+
+        }
+
+        var that = this;
+        this._background = document.createElement( "img" );
+        this._background.addEventListener( "load", function ( event ) {
+
+            that._canvas.width = that._background.naturalWidth;
+            that._canvas.height = that._background.naturalHeight;
+
+            that._crossRadius = Math.ceil( Math.min( that._canvas.width, that._canvas.height / 30 ) );
+            that._crossMax = Math.ceil( 0.70710678 * that._crossRadius );
+            that._crossMin = Math.ceil( that._crossMax / 10 );
+            that._crossThickness = Math.ceil( that._crossMax / 10 );
+
+            that._draw();
+
+        }, false );
+        this._background.crossOrigin = '';
+        this._background.src = "textures/UV_Grid_Sm.jpg";
+
+        this._draw();
+
+    };
+
+
+    CanvasTexture.prototype = {
+
+        constructor: CanvasTexture,
+
+        _canvas: null,
+        _context2D: null,
+        _xCross: 0,
+        _yCross: 0,
+
+        _crossRadius: 57,
+        _crossMax: 40,
+        _crossMin: 4,
+        _crossThickness: 4,
+
+        _parentTexture: [],
+
+        addParent: function ( parentTexture ) {
+
+            if ( this._parentTexture.indexOf( parentTexture ) === - 1 ) {
+
+                this._parentTexture.push( parentTexture );
+                parentTexture.image = this._canvas;
+
+            }
+
+        },
+
+        setCrossPosition: function ( x, y ) {
+
+            this._xCross = x * this._canvas.width;
+            this._yCross = y * this._canvas.height;
+
+            this._draw();
+
+        },
+
+        _draw: function () {
+
+            if ( ! this._context2D ) return;
+
+            this._context2D.clearRect( 0, 0, this._canvas.width, this._canvas.height );
+
+            // Background.
+            this._context2D.drawImage( this._background, 0, 0 );
+
+            // Yellow cross.
+            this._context2D.lineWidth = this._crossThickness * 3;
+            this._context2D.strokeStyle = "#FFFF00

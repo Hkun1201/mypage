@@ -1,0 +1,279 @@
+<html>
+<head>
+    <title>My first three.js app</title>
+    <meta charset="UTF-8">
+    <style>
+        body { margin: 0; }
+        canvas { width: 100%; height: 100% }
+        #fanstatus{
+            display: none;
+            z-index: 999;
+            position: fixed;
+            right: 0;
+            top:0;
+            background-color: RGBa(255,255,255,0.4);
+        }
+    </style>
+</head>
+<body>
+<script src="three.min.js"></script>
+<script src="TrackballControls.js"></script>
+<script type="text/javascript" src="dat.gui.min.js"></script>
+<script type="text/javascript" src="three.min.js"></script>
+<script type="text/javascript" src="OBJLoader.js"></script>
+<script type="text/javascript" src="MTLLoader.js"></script>
+<script type="text/javascript" src="DragControls.js"></script>
+<script>
+    var objects=[]
+    var INTERSECTED;
+    var raycaster;
+    var mouse;
+
+    window.onload=function () {
+        var fanstatus = document.getElementById("fanstatus")
+        var fan_spdtext = document.getElementById("fan-spdtext")
+        var fan_spdbtn=document.getElementById("fan-spdbtn")
+        var fan, outer
+        var fanspeed
+        var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(1, 0,20)
+//    camera.lookAt(0,0,0)
+        var renderer = new THREE.WebGLRenderer({alpha:true});
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        //环境光
+        var ambient = new THREE.AmbientLight(0x444444)
+        scene.add(ambient)
+
+        //平行光
+        var directionalLight = new THREE.DirectionalLight(0xffeedd)
+        directionalLight.position.set(10, 10, 10).normalize()
+        scene.add(directionalLight)
+
+        var directionalLight2 = new THREE.DirectionalLight(0xffeedd)
+        directionalLight2.position.set(-10, -10, -10).normalize()
+        scene.add(directionalLight2)
+
+        //加载材质&模型
+
+        //线
+        var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        var geometry = new THREE.Geometry();
+        geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
+        geometry.vertices.push(new THREE.Vector3(0, 10, 0));
+        geometry.vertices.push(new THREE.Vector3(10, 0, 0));
+        var line = new THREE.Line(geometry, material);
+        scene.add(line)
+
+        //反射平面
+        var plane = new THREE.Mesh(new THREE.PlaneGeometry(80,80), new THREE.MeshStandardMaterial( {color: 0x00ff00 }));
+        plane.castShadow = false;
+        plane.receiveShadow = true;
+        plane.position.set(0, 0, -15);
+        scene.add(plane);
+
+        var mtlLoader = new THREE.MTLLoader()
+        mtlLoader.setPath("resource/test/")
+
+        mtlLoader.load("0.0001Fan.mtl", function (materials) {
+            materials.preload()
+            var objLoader = new THREE.OBJLoader()
+            objLoader.setMaterials(materials)
+            objLoader.setPath("resource/test/")
+            objLoader.load("0.0001Fan.obj", function (object) {
+                object.traverse(function(child) {
+                    if (child instanceof THREE.Mesh) {
+                        child.material.side = THREE.DoubleSide;
+                    }
+                });
+                fan = object
+                objects.push(object)
+                scene.add(object)
+            })
+        })
+        mtlLoader.load("0.0001Outer.mtl", function (materials) {
+            materials.preload()
+            var objLoader = new THREE.OBJLoader()
+            objLoader.setMaterials(materials)
+            objLoader.setPath("resource/test/")
+            objLoader.load("0.0001Outer.obj", function (object) {
+                object.traverse(function(child) {
+                    if (child instanceof THREE.Mesh) {
+                        child.material.side = THREE.DoubleSide;
+                    }
+                });
+                outer = object
+                objects.push(object)
+                scene.add(object)
+            })
+        })
+
+
+        var objLoader = new THREE.OBJLoader()
+        /*
+        objLoader.load("resource/a_simple_ball.obj",function (object) {
+            object.position.y=8
+            scene.add(object)
+        })
+        */
+
+        objLoader.load("resource/cube.obj",function (object) {
+            objects.push(object)
+            object.position.y=8
+            scene.add(object)
+        })
+
+        //模型拖拽
+        var dragControls = new THREE.DragControls( objects, camera, renderer.domElement );
+        dragControls.addEventListener( 'dragstart', function ( event ) { controls.enabled = false; } );
+        dragControls.addEventListener( 'dragend', function ( event ) { controls.enabled = true; } );
+
+
+
+
+
+        /*
+        var rectShape= new THREE.Shape();
+        rectShape.moveTo(-10,10);
+        rectShape.lineTo(10, 10);
+        rectShape.lineTo(10,-10);
+        rectShape.lineTo(-10, -10);
+        rectShape.lineTo(-10, 10);
+        var rectGeom = new THREE.ShapeGeometry( rectShape );
+        var rectMesh = new THREE.Mesh( rectGeom, new THREE.MeshBasicMaterial( { color: 0xF8F8F8 } ))
+        objects.push(rectMesh)
+        scene.add(rectMesh)
+        rectMesh.position.z=-5
+        */
+
+        //拾取射线
+        var raycaster=new THREE.Raycaster()
+        var mouse = new THREE.Vector2()
+
+        document.addEventListener('mousemove', onDocumentMouseMove, false)
+
+        function onDocumentMouseMove(event) {
+            event.preventDefault()
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+        }
+
+
+        /*
+    var loader=new THREE.OBJLoader()
+
+    loader.load("resource/0.0001Fan.obj",function (obj) {
+        scene.add(obj)
+    })
+    loader.load("resource/0.0001Outer.obj",function (obj) {
+        scene.add(obj)
+    })
+    */
+        //    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+//    var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+//    var cube = new THREE.Mesh( geometry, material );
+//    scene.add( cube );
+
+
+    //
+        fanspeed=0.02
+        fan_spdtext.value= fanspeed
+        fan_spdbtn.addEventListener("click",function () {
+            if (0<parseInt(fan_spdtext.value)<0.1){
+                fanspeed=fan_spdtext.value
+            }else {
+                fan_spdtext.value=fanspeed
+            }
+        })
+
+        //控制器
+        controls = new THREE.TrackballControls( camera );
+        controls.rotateSpeed = 5.0;
+        controls.zoomSpeed = 1.2;
+        controls.panSpeed = 0.8;
+        controls.noZoom = false;
+        controls.noPan = false;
+        controls.staticMoving = true;
+        controls.dynamicDampingFactor = 0.3;
+
+
+        //GUI
+        var FizzyText = function() {
+            this.message = 'dat.gui';
+            this.speed = fanspeed;
+            this.displayOutline = false;
+            this.explode = function() {  };
+            // Define render logic ...
+        };
+
+        var text = new FizzyText();
+        var gui = new dat.GUI();
+        gui.add(text, 'message');
+        var gui_fanspd=gui.add(text, 'speed', 0, 0.1).step(0.005);
+        gui.add(text, 'displayOutline');
+        gui.add(text, 'explode');
+
+        gui_fanspd.onChange(function () {
+            controls.enabled = false
+        })
+
+        gui_fanspd.onFinishChange(function (value) {
+            fanspeed=value
+            controls.enabled = true
+        })
+        var render = function () {
+            controls.update();
+            requestAnimationFrame( render );
+            fan.rotation.z = (fan.rotation.z - fanspeed) % (Math.PI * 2);
+            renderer.render(scene, camera);
+
+            //拾取判定
+            raycaster.setFromCamera(mouse, camera);
+            var intersects = raycaster.intersectObjects(scene.children);//取得射线与场景中所有物体相交的合集
+            if (intersects.length > 0) {//合集中存在物体的情况
+                if (INTERSECTED != intersects[0].object){//排除已经选中的物体
+                    if (INTERSECTED){//存在已选中物体的情况
+                        INTERSECTED.material.color.setHex(INTERSECTED.currentHex);//把已经选中的物体颜色恢复成原来的
+                    }
+                    //
+                    INTERSECTED = intersects[0].object;//把当前选中的物体存入
+                    //
+                    INTERSECTED.currentHex = INTERSECTED.material.color.getHex();//把当前选中的物体颜色存入
+                    //
+                    INTERSECTED.material.color.set( 0x000000 );//把当前物体的颜色改变为高亮（红色）
+                }
+            } else {//鼠标移入空区域
+                if (INTERSECTED){
+                    INTERSECTED.material.color.set(INTERSECTED.currentHex);//把已经选中的物体颜色恢复成原来的
+                }
+                INTERSECTED = null;//清空临时对象
+            }
+        };
+
+        render();
+
+        /*
+        function () {
+            console.log(0)
+            if (0<fan_spdtext.value<0.1){
+                fanspeed=fan_spdtext.value
+                console.log(1)
+            }else {
+                fan_spdtext.value=fanspeed
+                console.log(2)
+            }
+        }
+        */
+    }
+</script>
+<div id="fanstatus">
+    <div>
+        <span>转动速度</span>
+    </div>
+    <input type="text" id="fan-spdtext">
+    <input type="button" id="fan-spdbtn">
+</div>
+</body>
+</html>
